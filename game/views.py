@@ -2,5 +2,5 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 # Create your views here.
-def login(self):
-    return HttpResponse('<h1>Hello, world!</h1>')
+def inicio(request):
+    return render(request, 'game/inicio.html')
