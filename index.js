@@ -10,7 +10,7 @@ const server = app.listen(PORT, () => {
 });
 
 // STATIC FILES
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
 
 // SOCKET SETUP
 const io = socket(server);
@@ -18,4 +18,8 @@ const io = socket(server);
 io.on("connection", (socket) => {
     console.log("Socket connection made");
     console.log("Users connected: " + socket.client.conn.server.clientsCount);
+
+    socket.on("answer", (data) => {
+        io.sockets.emit("answer", data);
+    });
 });
