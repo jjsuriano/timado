@@ -27,16 +27,16 @@ const {name, room} = Qs.parse(location.search, {
 
 socket.emit("joinRoom", {name, room});
 
-// LISTEN FOR EVENTS
+// LISTEN FOR ANSWERS
 socket.on("answer", (data) => {
-    answers.innerHTML += "<p>" + data.answer + "</p>";
+    answers.innerHTML += "<p>" + data.name + ": " + data.answer + "</p>";
 
 });
 
+// LISTEN FOR USERS IN ROOM AND ROOM NAME
 socket.on("roomUsers", ({room, users}) => {
     roomName(room);
     outputUsers(users);
-
 })
 
 // USER CONNECT AND DISCONNECT
@@ -44,6 +44,8 @@ socket.on("message", (data) => {
     console.log(data);
 });
 
+
+// HELPER FUNCTIONS
 function roomName(room) {
     gameName.innerHTML = room;
 }

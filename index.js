@@ -25,19 +25,25 @@ io.on("connection", (socket) => {
         const user = joinUser(socket.id, name, room);
         socket.join(user.room);
 
+        // RECIEVE ANSWERS BY THE USERS
         socket.on("answer", (data) => {
-            io.to(user.room).emit("answer", data);
+            io.to(user.room).emit("answer", {
+                name: user.name, 
+                answer: data.answer
+            });
         });
     
-    
+        // EMIT BROADCAST MESSAGE THAT USER JUST JOINED
         socket.broadcast.to(user.room).emit("message", `${user.name} se acaba de unir al juego`);
 
+        // EMIT USERS AND ROOM NAME OF THE ROOM USER JOINED
         io.to(user.room).emit("roomUsers", {
             room: user.room,
             users: getRoomUsers(user.room),
         });
     });
 
+    // USER DISCONNECTS
     socket.on("disconnect", () => {
         console.log("Socket connection closed");
         console.log("Users connected: " + socket.client.conn.server.clientsCount + "\n");
@@ -53,7 +59,6 @@ io.on("connection", (socket) => {
 });
 
 // SERVER
-
 server.listen(PORT, () => {
     console.log(`Listening to requests on port ${PORT}...`);
 });
