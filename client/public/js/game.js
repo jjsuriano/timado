@@ -19,7 +19,6 @@ form.addEventListener("submit", (e) => {
     answer.value = "";
 });
 
-
 // GET NAME AND ROOM FROM URL
 const {name, room} = Qs.parse(location.search, {
     ignoreQueryPrefix: true,
