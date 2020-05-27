@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡timado!</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.9.4/qs.min.js" integrity="sha256-ijqLssetA1NMNjZ+w1zaUafQQLm4IW5OoM8O+4tatME=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js" integrity="sha256-bQmrZe4yPnQrLTY+1gYylfNMBuGfnT/HKsCGX+9Xuqo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="chat-container">
+        <header class="chat-header">
+          <h1>¡timado!</h1>
+          <a href="index.html" class="btn">Salir del Juego</a>
+        </header>
+        <main class="chat-main">
+          <div class="chat-sidebar">
+            <h3>Clave del juego</h3>
+            <h2 id="game-name"></h2>
+            <h3>Jugadores</h3>
+            <ul id="users"></ul>
+          </div>
+          <div id="answers"></div>
+        </main>
+        <div class="game-form-container">
+          <form id="game-form">
+            <input
+              id="answer"
+              type="text"
+              placeholder="Escribe tu respuesta aquí"
+              required
+              autocomplete="off"
+            />
+            <button id="send">Enviar</button>
+          </form>
+        </div>
+      </div>
+    
+    <script src="/js/game.js"></script>
+</body>
+</html>

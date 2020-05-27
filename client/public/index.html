@@ -4,21 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>¡timado!</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js" integrity="sha256-bQmrZe4yPnQrLTY+1gYylfNMBuGfnT/HKsCGX+9Xuqo=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="/client/css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-    <h1>¡Bienvenido a timado!</h1>
-    <h2>Un juego en linea para disfrutar en familia durante esta cuarentena</h2>
-    <div id="answers">
-
+    
+    <div class="join-container">
+        <header class="join-header">
+            <h1>¡Bienvenido a timado!</h1>
+            <h2>Un juego en linea para disfrutar en familia durante esta cuarentena</h2>
+        </header>
+        <main class="join-main">
+            <form action="game.html" id="join-form">
+                <div class="form-control">
+                    <label for="name">Nombre</label>
+                    <input
+                        type="text"
+                        name="name"
+                        id="name"
+                        placeholder="¿Cuál es tu nombre?"
+                        required
+                    />
+                </div>
+                <div class="join-room">
+                    <label for="room">Clave</label>
+                    <input
+                        type="text"
+                        name="room"
+                        id="room"
+                        placeholder="Escribe el clave del juego"
+                        required
+                    />
+                </div>
+                <button type="submit" class="btn">Meterme al Juego</button>
+            </form>
+        </main>
     </div>
-    </div>
-    <div>
-        <input type="text" id="answer" placeholder="Escribe tu respuesta aquí">
-        <button id="send">Enviar</button>
-    </div>
-
-    <script src="/client/js/game.js"></script>
 </body>
 </html>
