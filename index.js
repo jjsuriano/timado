@@ -5,7 +5,8 @@ const http = require("http")
 const socket = require("socket.io");
 
 const { joinUser,  userLeft, getRoomInfo, addAnswer, getAnswersFromRoom, 
-updateRoundScore, counter, updateTotalScores, generateQuestion} = require("./utils/users");
+updateRoundScore, counter, updateTotalScores, generateQuestion, 
+isFirstConnection } = require("./utils/users");
 
 // APP SETUP
 const app = express();
@@ -30,6 +31,10 @@ io.on("connection", (socket) => {
         let currentRoom = io.sockets.adapter.rooms[user.room];
         console.log(`Number of users connected in ${user.room}: ` + currentRoom.length + "\n");
 
+        if (isFirstConnection(user.id)) {
+            io.to(user.room).emit("VIP", user.id);
+        }
+
         // RECIEVE ANSWERS BY THE USERS
         socket.on("logAnswer", (id) => {
             updateRoundScore(id);
@@ -41,8 +46,13 @@ io.on("connection", (socket) => {
                     room: user.room,
                     users: getRoomInfo(user.room),
                 });
+                // FIX THIS - SAME QUESTION DIFFERENT NAME 
                 io.to(user.room).emit("start", generateQuestion(user.room));
             }
+        });
+
+        socket.on("play", () => {
+            io.to(user.room).emit("start", generateQuestion(user.room));
         });
 
         socket.on("answer", (data) => {

@@ -56,6 +56,10 @@ function counter(room) {
     return c;
 }
 
+function isFirstConnection(id) {
+    return users.findIndex(user => user.id === id) == 0;
+}
+
 function updateTotalScores(users) {
     for (let i=0; i<users.length; i++) {
         let user = getCurrentUser(users[i].id);
@@ -99,4 +103,5 @@ module.exports = {
     counter, 
     updateTotalScores, 
     generateQuestion,
+    isFirstConnection
 };

@@ -9,8 +9,13 @@ const send = document.getElementById("send");
 const gameName = document.getElementById("game-name");
 const usersList = document.getElementById("users");
 const question = document.getElementById("question");
+const play = document.getElementById("play-form");
 
 const autoMsg = "automatedMsg";
+
+answer.hidden = true;
+send.hidden = true;
+play.hidden = true;
 
 // EMIT EVENT
 form.addEventListener("submit", (e) => {
@@ -31,6 +36,12 @@ answers.addEventListener("submit", (e) => {
     });
     answers.innerHTML = "";
     answers.hidden = true;
+});
+
+play.addEventListener("submit", (e) => {
+    e.preventDefault();
+    socket.emit("play", "Start game");
+    play.hidden = true;
 });
 
 // GET NAME AND ROOM FROM URL
@@ -61,6 +72,12 @@ socket.on("start", (data) => {
     outputQuestion(data);
     answer.hidden = false;
     send.hidden = false;
+});
+
+socket.on("VIP", (data) => {
+    if (data == socket.id) {
+        play.hidden = false;
+    }
 });
 
 // HELPER FUNCTIONS
