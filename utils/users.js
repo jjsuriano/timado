@@ -47,7 +47,7 @@ function generateQuestion(room) {
     return question;
 }
 
-function counter(room) {
+function scoreCounter(room) {
     const usersRoom =  users.filter(user => user.room === room);
     let c = 0;
     for (let i=0; i<usersRoom.length; i++){
@@ -56,8 +56,8 @@ function counter(room) {
     return c;
 }
 
-function isFirstConnection(id) {
-    return users.findIndex(user => user.id === id) == 0;
+function isFirstConnection() {
+    return users[0];
 }
 
 function updateTotalScores(users) {
@@ -106,7 +106,7 @@ module.exports = {
     addAnswer,
     getAnswersFromRoom, 
     updateRoundScore, 
-    counter, 
+    scoreCounter, 
     updateTotalScores, 
     generateQuestion,
     isFirstConnection

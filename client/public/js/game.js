@@ -10,12 +10,14 @@ const gameName = document.getElementById("game-name");
 const usersList = document.getElementById("users");
 const question = document.getElementById("question");
 const play = document.getElementById("play-form");
+const again = document.getElementById("again-form");
 
 const autoMsg = "automatedMsg";
 
 answer.hidden = true;
 send.hidden = true;
 play.hidden = true;
+again.hidden = true;
 
 let started = false;
 
@@ -47,6 +49,14 @@ play.addEventListener("submit", (e) => {
     started = true;
 });
 
+again.addEventListener("submit", (e) => {
+    e.preventDefault();
+    socket.emit("again", {
+        id: e.submitter.value,
+    });
+    again.hidden = true;
+});
+
 // GET NAME AND ROOM FROM URL
 const {name, room} = Qs.parse(location.search, {
     ignoreQueryPrefix: true,
@@ -73,6 +83,7 @@ socket.on(autoMsg, (data) => {
 });
 
 socket.on("start", (data) => {
+    question.hidden = false;
     outputQuestion(data);
     answer.hidden = false;
     send.hidden = false;
@@ -85,7 +96,8 @@ socket.on("VIP", (data) => {
 });
 
 socket.on("results", () => {
-    play.hidden = false;
+    question.hidden = true;
+    again.hidden = false;
 });
 
 // HELPER FUNCTIONS
