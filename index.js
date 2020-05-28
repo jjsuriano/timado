@@ -4,7 +4,8 @@ const express = require("express");
 const http = require("http")
 const socket = require("socket.io");
 
-const { joinUser, getCurrentUser,  userLeft, getRoomInfo, addAnswer, getAnswersFromRoom} = require("./utils/users");
+const { joinUser, getCurrentUser,  userLeft, getRoomInfo, addAnswer, getAnswersFromRoom, 
+updateRoundScore, counter, updateTotalScores } = require("./utils/users");
 
 // APP SETUP
 const app = express();
@@ -23,26 +24,36 @@ io.on("connection", (socket) => {
     console.log("Total number of users connected: " + socket.client.conn.server.clientsCount + "\n");
 
     socket.on("joinRoom", ({ name, room }) => {
-        const user = joinUser(socket.id, name, room, 0, "");
+        const user = joinUser(socket.id, name, room, 0, "", 0);
         socket.join(user.room);
 
-        let answers = {
-            id: socket.id, 
-            answer: ""
-        }
-
         let currentRoom = io.sockets.adapter.rooms[user.room];
-        console.log(`Total number of users connected in ${user.room}: ` + currentRoom.length);
+        console.log(`Number of users connected in ${user.room}: ` + currentRoom.length + "\n");
 
         // RECIEVE ANSWERS BY THE USERS
+        socket.on("logAnswer", (id) => {
+            updateRoundScore(id);
+            let count = counter(user.room);
+            if (count == io.sockets.adapter.rooms[user.room].length) {
+                let users = getRoomInfo(user.room);
+                updateTotalScores(users);
+                io.to(user.room).emit("roomUsers", {
+                    room: user.room,
+                    users: getRoomInfo(user.room),
+                });
+                io.to(user.room).emit("start", "Start a new game");
+            }
+        });
+
         socket.on("answer", (data) => {
             addAnswer(user.id, data.answer);
             let answers = getAnswersFromRoom(user.room);
             if (answers.length == io.sockets.adapter.rooms[user.room].length) {
-                io.to(user.room).emit("answer", {
-                    name: user.name, 
-                    answer: data.answer
-                });
+                io.to(user.room).emit("answers", answers);
+                let users = getRoomInfo(user.room);
+                for (let i=0; i<users.length; i++) {
+                    users[i].answer = "";
+                }
             }
             
         });
@@ -56,6 +67,8 @@ io.on("connection", (socket) => {
             users: getRoomInfo(user.room),
         });
     });
+
+    
 
     // USER DISCONNECTS
     socket.on("disconnect", () => {
@@ -74,5 +87,5 @@ io.on("connection", (socket) => {
 
 // SERVER
 server.listen(PORT, () => {
-    console.log(`Listening to requests on port ${PORT}...`);
+    console.log(`Listening to requests on port ${PORT}...\n`);
 });
