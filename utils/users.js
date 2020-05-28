@@ -4,7 +4,7 @@ const questions = [
     "¿Si [] fuera una pupusa, qué tipo fuera?", 
     "¿Qué profesión fue [] en su vida anterior?", 
     "¿Qué tema no hay que hablar con []?", 
-    "En cenas familiares [] ...", 
+    "En cenas familiares []...", 
     "Escribe una palabra que describa a [].",
     "Escribe un articulo que siempre está en la maleta de [] cuando viaja.", 
     "¿Si le dieras un regalo a [], que le dieras?", 
@@ -12,8 +12,8 @@ const questions = [
 ]
 
 // JOIN USER IN GAME
-function joinUser(id, name, room, score, answer, roundScore) { 
-    const user = { id, name, room, score, answer, roundScore };
+function joinUser(id, name, room, score, answer, roundScore, ready) { 
+    const user = { id, name, room, score, answer, roundScore, ready};
     users.push(user);
     return user;
 }
@@ -44,6 +44,11 @@ function generateQuestion(room) {
     const players = users.filter(user => user.room === room)
     const player = players[Math.floor(Math.random() * (players.length))].name;
     question = question.replace("[]", player);
+
+    for (let i=0; i<players.length; i++) {
+        players[i].ready = 0;
+    }
+
     return question;
 }
 
@@ -63,7 +68,7 @@ function isFirstConnection() {
 function updateTotalScores(users) {
     let roundResults = [];
     for (let i=0; i<users.length; i++) {
-        let user = getCurrentUser(users[i].id);
+        let user = getCurrentUser(users[i]);
         roundResults.push({
             id: user.id, 
             score: user.roundScore,
@@ -75,8 +80,22 @@ function updateTotalScores(users) {
 }
 
 // GET THE CURRENT USER WITH ID
-function getCurrentUser(id) {
-    return users.find(user => user.id === id);
+function getCurrentUser(data) {
+    return users.find(user => user.id === data.id);
+}
+
+function userReady(data) {
+    const player = users.find(user => user.id === data);
+    player.ready = 1;
+}
+
+function readyCounter(room) {
+    const usersRoom =  users.filter(user => user.room === room);
+    let c = 0;
+    for (let i=0; i<usersRoom.length; i++){
+        c += usersRoom[i].ready;
+    }
+    return c;
 }
 
 // GET THE CURRENT USER AND REMOVE IT FROM THE ARRAY
@@ -105,9 +124,12 @@ module.exports = {
     getRoomInfo,
     addAnswer,
     getAnswersFromRoom, 
+    getCurrentUser,
     updateRoundScore, 
     scoreCounter, 
     updateTotalScores, 
     generateQuestion,
-    isFirstConnection
+    isFirstConnection, 
+    userReady,
+    readyCounter
 };

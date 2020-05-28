@@ -6,7 +6,7 @@ const socket = require("socket.io");
 
 const { joinUser,  userLeft, getRoomInfo, addAnswer, getAnswersFromRoom, 
 updateRoundScore, scoreCounter, updateTotalScores, generateQuestion, 
-isFirstConnection } = require("./utils/users");
+isFirstConnection, readyCounter, userReady, getCurrentUser } = require("./utils/users");
 
 // APP SETUP
 const app = express();
@@ -25,7 +25,7 @@ io.on("connection", (socket) => {
     console.log("Total number of users connected: " + socket.client.conn.server.clientsCount + "\n");
 
     socket.on("joinRoom", ({ name, room }) => {
-        const user = joinUser(socket.id, name, room, 0, "", 0);
+        const user = joinUser(socket.id, name, room, 0, "", 0, 1);
         socket.join(user.room);
 
         let currentRoom = io.sockets.adapter.rooms[user.room];
@@ -36,19 +36,23 @@ io.on("connection", (socket) => {
 
         // RECIEVE ANSWERS BY THE USERS
         socket.on("logAnswer", (id) => {
+            // console.log(user.ready);
             updateRoundScore(id);
+
+            console.log(id);
+            io.to(user.id).emit("results", {
+                psychedBy: getCurrentUser(id).name,
+            });
+
             let count = scoreCounter(user.room);
             if (count == io.sockets.adapter.rooms[user.room].length) {
                 let users = getRoomInfo(user.room);
-                const results = updateTotalScores(users);
+                updateTotalScores(users);
                 io.to(user.room).emit("roomUsers", {
                     room: user.room,
                     users: getRoomInfo(user.room),
                 });
-                // FIX THIS - SAME QUESTION DIFFERENT NAME 
-                io.to(user.room).emit("results", {
-                    results: results,
-                });
+                
             }
         });
 
@@ -57,8 +61,12 @@ io.on("connection", (socket) => {
         });
 
         socket.on("again", () => {
-            let count = counter()
-            io.to(user.room).emit("start", generateQuestion(user.room));
+            userReady(user.id);
+            let count = readyCounter(user.room);
+            if (count == io.sockets.adapter.rooms[user.room].length) {
+                io.to(user.room).emit("start", generateQuestion(user.room));
+            }
+            
         });
 
         socket.on("answer", (data) => {

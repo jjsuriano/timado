@@ -19,8 +19,6 @@ send.hidden = true;
 play.hidden = true;
 again.hidden = true;
 
-let started = false;
-
 // EMIT EVENT
 form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -46,7 +44,6 @@ play.addEventListener("submit", (e) => {
     e.preventDefault();
     socket.emit("play", "Start game");
     play.hidden = true;
-    started = true;
 });
 
 again.addEventListener("submit", (e) => {
@@ -95,9 +92,10 @@ socket.on("VIP", (data) => {
     }
 });
 
-socket.on("results", () => {
+socket.on("results", (data) => {
     question.hidden = true;
     again.hidden = false;
+    console.log(data.psychedBy);
 });
 
 // HELPER FUNCTIONS
@@ -106,11 +104,7 @@ function roomName(room) {
 }
 
 function outputUsers(users) {
-    if (started) {
-        usersList.innerHTML = `${users.map(user => `<li>${user.name} ${user.score}</li>`).join("")}`;
-    } else {
-        usersList.innerHTML = `${users.map(user => `<li>${user.name}</li>`).join("")}`;
-    }
+    usersList.innerHTML = `${users.map(user => `<li>${user.name} ${user.score}</li>`).join("")}`;
 }
 
 function outputQuestion(q) {
