@@ -17,6 +17,8 @@ answer.hidden = true;
 send.hidden = true;
 play.hidden = true;
 
+let started = false;
+
 // EMIT EVENT
 form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -42,6 +44,7 @@ play.addEventListener("submit", (e) => {
     e.preventDefault();
     socket.emit("play", "Start game");
     play.hidden = true;
+    started = true;
 });
 
 // GET NAME AND ROOM FROM URL
@@ -60,7 +63,8 @@ socket.on("answers", (data) => {
 // LISTEN FOR USERS IN ROOM AND ROOM NAME
 socket.on("roomUsers", ({room, users}) => {
     roomName(room);
-    outputUsers(users);
+    const usersSorted = users.sort((a, b) => b.score - a.score)
+    outputUsers(usersSorted);
 })
 
 // USER CONNECT AND DISCONNECT
@@ -80,13 +84,21 @@ socket.on("VIP", (data) => {
     }
 });
 
+socket.on("results", () => {
+    play.hidden = false;
+});
+
 // HELPER FUNCTIONS
 function roomName(room) {
     gameName.innerHTML = room;
 }
 
 function outputUsers(users) {
-    usersList.innerHTML = `${users.map(user => `<li>${user.name} ${user.score}</li>`).join("")}`;
+    if (started) {
+        usersList.innerHTML = `${users.map(user => `<li>${user.name} ${user.score}</li>`).join("")}`;
+    } else {
+        usersList.innerHTML = `${users.map(user => `<li>${user.name}</li>`).join("")}`;
+    }
 }
 
 function outputQuestion(q) {

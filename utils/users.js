@@ -61,11 +61,17 @@ function isFirstConnection(id) {
 }
 
 function updateTotalScores(users) {
+    let roundResults = [];
     for (let i=0; i<users.length; i++) {
         let user = getCurrentUser(users[i].id);
+        roundResults.push({
+            id: user.id, 
+            score: user.roundScore,
+        });
         user.score += user.roundScore;
         user.roundScore = 0;
     }
+    return roundResults;
 }
 
 // GET THE CURRENT USER WITH ID

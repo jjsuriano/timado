@@ -41,13 +41,15 @@ io.on("connection", (socket) => {
             let count = counter(user.room);
             if (count == io.sockets.adapter.rooms[user.room].length) {
                 let users = getRoomInfo(user.room);
-                updateTotalScores(users);
+                const results = updateTotalScores(users);
                 io.to(user.room).emit("roomUsers", {
                     room: user.room,
                     users: getRoomInfo(user.room),
                 });
                 // FIX THIS - SAME QUESTION DIFFERENT NAME 
-                io.to(user.room).emit("start", generateQuestion(user.room));
+                io.to(user.id).emit("results", {
+                    results: results,
+                });
             }
         });
 
