@@ -8,6 +8,7 @@ const answer = document.getElementById("answer");
 const send = document.getElementById("send");
 const gameName = document.getElementById("game-name");
 const usersList = document.getElementById("users");
+const question = document.getElementById("question");
 
 const autoMsg = "automatedMsg";
 
@@ -56,7 +57,8 @@ socket.on(autoMsg, (data) => {
     console.log(data);
 });
 
-socket.on("start", () => {
+socket.on("start", (data) => {
+    outputQuestion(data);
     answer.hidden = false;
     send.hidden = false;
 });
@@ -70,10 +72,13 @@ function outputUsers(users) {
     usersList.innerHTML = `${users.map(user => `<li>${user.name} ${user.score}</li>`).join("")}`;
 }
 
+function outputQuestion(q) {
+    question.innerHTML = `${q}`;
+}
+
 function printAnswers(answersList) {
     let html = "";
     for(let i=0; i<answersList.length; i++) {
-        console.log(socket.id);
         if (answersList[i].id !== socket.id) {
             html += `<button type="submit" class="answer-btn" value="${answersList[i].id}">${answersList[i].answer}</button>`;
         } 

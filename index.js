@@ -4,8 +4,8 @@ const express = require("express");
 const http = require("http")
 const socket = require("socket.io");
 
-const { joinUser, getCurrentUser,  userLeft, getRoomInfo, addAnswer, getAnswersFromRoom, 
-updateRoundScore, counter, updateTotalScores } = require("./utils/users");
+const { joinUser,  userLeft, getRoomInfo, addAnswer, getAnswersFromRoom, 
+updateRoundScore, counter, updateTotalScores, generateQuestion} = require("./utils/users");
 
 // APP SETUP
 const app = express();
@@ -41,7 +41,7 @@ io.on("connection", (socket) => {
                     room: user.room,
                     users: getRoomInfo(user.room),
                 });
-                io.to(user.room).emit("start", "Start a new game");
+                io.to(user.room).emit("start", generateQuestion(user.room));
             }
         });
 

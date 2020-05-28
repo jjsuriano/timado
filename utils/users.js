@@ -1,5 +1,16 @@
 const users = [];
 
+const questions = [
+    "¿Si [] fuera una pupusa, qué tipo fuera?", 
+    "¿Qué profesión fue [] en su vida anterior?", 
+    "¿Qué tema no hay que hablar con []?", 
+    "En cenas familiares [] ...", 
+    "Escribe una palabra que describa a [].",
+    "Escribe un articulo que siempre está en la maleta de [] cuando viaja.", 
+    "¿Si le dieras un regalo a [], que le dieras?", 
+    "¿Cuál es el talento secreto de []?",
+]
+
 // JOIN USER IN GAME
 function joinUser(id, name, room, score, answer, roundScore) { 
     const user = { id, name, room, score, answer, roundScore };
@@ -26,6 +37,14 @@ function getAnswersFromRoom(room) {
         }
     }
     return answers;
+}
+
+function generateQuestion(room) {
+    let question = questions[Math.floor(Math.random() * (questions.length))];
+    const players = users.filter(user => user.room === room)
+    const player = players[Math.floor(Math.random() * (players.length))].name;
+    question = question.replace("[]", player);
+    return question;
 }
 
 function counter(room) {
@@ -72,12 +91,12 @@ function updateRoundScore(data) {
 
 module.exports = {
     joinUser, 
-    getCurrentUser, 
     userLeft, 
     getRoomInfo,
     addAnswer,
     getAnswersFromRoom, 
     updateRoundScore, 
     counter, 
-    updateTotalScores
+    updateTotalScores, 
+    generateQuestion,
 };
